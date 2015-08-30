@@ -13,7 +13,7 @@ To prepare local installation, use the following command::
     pip install -r requirements.txt
 
 ## Usage
-To run behave, use::
+To run behave, use command::
     behave
-or, to see console output,::
+or, to see console output,command::
     behave --no-capture
