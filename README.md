@@ -8,12 +8,15 @@ Python Behave/Docker test examples
 
 ## Installation
 The project provides test examples.
-To prepare local installation, use the following command::
+To prepare local installation, use the following command
 
     pip install -r requirements.txt
 
 ## Usage
-To run behave, use command::
+To run behave, use command
+
     behave
-or, to see console output,command::
+
+or, to see console output,
+
     behave --no-capture
