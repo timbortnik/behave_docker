@@ -17,3 +17,9 @@ Scenario: Pull MySQL image
     When we connect to docker
      And we pull an image sameersbn/mysql:latest
     Then we can see sameersbn/mysql in the image list
+
+Scenario: Run MySQL in Docker container
+    When we connect to docker
+     And we create container mysqld from image sameersbn/mysql
+     And we start container mysqld
+    Then we can see mysqld in the running containers list

@@ -47,9 +47,44 @@ def step_impl(context,tag,path):
 
 @when("we pull an image {repository}:{tag}")
 def step_impl(context,repository,tag):
-    response = context.client.pull(repository,tag)
+    response =context.client.pull(repository,tag)
     print (response)
     assert "Status: Image is up to date" in response
+
+@when("we create container {tag} from image {repository}")
+def step_impl(context,repository,tag):
+    cont = "/"+ tag
+    response = filter_unicode_data(context.client.containers(all=True))
+    for i in range(0,len(response)):
+        print (response[i])
+        if cont in response[i]['Names'] :
+            if "Up" in response[i]['Status'] :
+                context.client.stop(container=tag)
+            context.client.remove_container(container=cont)
+    response = filter_unicode_data(context.client.create_container(image=repository,name=tag))
+    print (response)
+    print ()
+    assert response["Warnings"] is None
+
+@when("we start container {tag}")
+def step_impl(context,tag):
+    response = context.client.start(container=tag)
+    print (response)
+    print (response)
+    print ()
+    assert response is None
+
+@Then("we can see {tag} in the running containers list")
+def step_impl(context,tag):
+    cont = "/"+ tag
+    response = filter_unicode_data(context.client.containers(all=False))
+    for i in range(0,len(response)):
+        print (response[i])
+        if cont in response[i]['Names'] :
+            if "Up" in response[i]['Status'] :
+                pass
+                return
+    assert False
 
 @then("we can see {image} in the image list")
 def step_impl(context,image):
