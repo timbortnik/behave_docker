@@ -15,4 +15,5 @@ Scenario: Check Docker version
 
 Scenario: Pull MySQL image
     When we connect to docker
-     and we pull an image sameersbn/mysql:latest
+     And we pull an image sameersbn/mysql:latest
+    Then we can see sameersbn/mysql in the image list

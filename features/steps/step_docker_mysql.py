@@ -1,4 +1,6 @@
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
+
 """
 Based on ``behave tutorial``
 """
@@ -9,6 +11,26 @@ Based on ``behave tutorial``
 # ----------------------------------------------------------------------------
 from behave import given, when, then
 import docker
+
+def filter_unicode_data(obj):
+    if type(obj) in (int, float, str, bool):
+        return obj
+    elif type(obj) == unicode:
+        return str(obj)
+    elif type(obj) in (list, tuple, set):
+        obj = list(obj)
+        for i,v in enumerate(obj):
+            obj[i] = filter_unicode_data(v)
+    elif type(obj) == dict:
+        obj_str = {}
+        for i,v in obj.items():
+            obj_str[filter_unicode_data(i)] = filter_unicode_data(v)
+        return obj_str
+    return obj
+
+#
+#  Docker
+#
 
 DEFAULT_BASE_URL = 'unix://var/run/docker.sock'
 EXEC_DRIVER_IS_NATIVE = True
@@ -29,9 +51,21 @@ def step_impl(context,repository,tag):
     print (response)
     assert "Status: Image is up to date" in response
 
+@then("we can see {image} in the image list")
+def step_impl(context,image):
+    response = context.client.images(name=image)[0]
+    response = filter_unicode_data(response)
+    print(response)
+    print()
+    assert image in response["RepoTags"][0]
+
 @then('docker version is >={ver}')
 def step_impl(context,ver):
     assert context.client.version()["Version"] >= ver
+
+#
+# Behave
+#
 
 @given('we have behave installed')
 def step_impl(context):
@@ -44,4 +78,3 @@ def step_impl(context):
 @then('behave will test it for us!')
 def step_impl(context):
     assert context.failed is False
-
